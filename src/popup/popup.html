@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <div class="header-panel">
+    
+    <div class="collapsible-filters" id="collapsibleFilters">
+      <div class="header-row">
+        <!-- Filtros Principales -->
+        <div>
+          <div class="group-title">
+            Filtros de Contenido 
+            <span class="info-icon" title="Usa un texto para buscar en las URLs o filtra por formato (jpg, png, etc.)">?</span>
+          </div>
+          <div class="flex-row">
+            <input type="text" id="filterUrl" placeholder="Buscar palabras clave en la URL..." title="Escribe palabras clave para filtrar imágenes" />
+            <select id="filterExt" title="Filtrar por extensión">
+              <option value="all">Formato: Todos</option>
+              <option value="jpg">Solo JPG</option>
+              <option value="jpeg">Solo JPEG</option>
+              <option value="png">Solo PNG</option>
+              <option value="webp">Solo WEBP</option>
+              <option value="gif">Solo GIF</option>
+              <option value="svg">Solo SVG</option>
+              <option value="avif">Solo AVIF</option>
+              <option value="bmp">Solo BMP</option>
+              <option value="tiff">Solo TIFF</option>
+              <option value="tif">Solo TIF</option>
+              <option value="ico">Solo ICO</option>
+              <option value="heic">Solo HEIC</option>
+              <option value="heif">Solo HEIF</option>
+              <option value="jxl">Solo JXL</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tamaño Mínimo -->
+        <div>
+          <div class="group-title">
+            Tamaño Mínimo Requerido
+            <span class="info-icon" title="Oculta logos pequeños, iconos y botones ajustando el tamaño mínimo.">?</span>
+          </div>
+          <div class="sliders-container">
+            <div class="slider-box" title="Filtra imágenes más pequeñas que este ancho">
+              <span>Ancho</span>
+              <input type="range" id="minWidth" min="0" max="2500" value="0" step="10">
+              <input type="number" id="minWidthVal" value="0">
+            </div>
+            <div class="slider-box" title="Filtra imágenes más pequeñas que este alto">
+              <span>Alto</span>
+              <input type="range" id="minHeight" min="0" max="2500" value="0" step="10">
+              <input type="number" id="minHeightVal" value="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opciones Avanzadas -->
+      <div>
+        <div class="options-grid">
+          <label class="custom-checkbox" title="Especial para galerías de Cómics: Abre las miniaturas en la sombra para atraparlas en Calidad Original.">
+            <input type="checkbox" id="forceHD">
+            <div class="checkbox-text">
+              <b>Forzar HD (Lhentai/Galerías)</b>
+              <small>Extracción profunda original</small>
+            </div>
+          </label>
+          
+          <label class="custom-checkbox" title="Crea subcarpetas automáticas (4K, 1080p, etc.) según la resolución de cada imagen.">
+            <input type="checkbox" id="separateQuality">
+            <div class="checkbox-text">
+              <b>Separar por Calidad</b>
+              <small>Carpetas (4K, 1080p...)</small>
+            </div>
+          </label>
+
+          <label class="custom-checkbox" title="Renombra los archivos como pag_01, pag_02 de acuerdo a su orden en la página, ignorando el nombre original.">
+            <input type="checkbox" id="renameSequential" checked>
+            <div class="checkbox-text">
+              <b>Renombrar a "pag_X"</b>
+              <small>Ordena pag_01, pag_02...</small>
+            </div>
+          </label>
+
+          <label class="custom-checkbox" title="Modo Inteligente: Detecta y selecciona automáticamente solo las páginas del cómic, ignorando banners, menús y publicidad.">
+            <input type="checkbox" id="smartComic" checked>
+            <div class="checkbox-text">
+              <b>Modo Solo Cómic 🎯</b>
+              <small>Filtra logos y banners</small>
+            </div>
+          </label>
+
+          <label class="custom-checkbox" title="Convierte y descarga las imágenes en formato PNG (equivalente al guardado manual de Hitomi).">
+            <input type="checkbox" id="forcePNG">
+            <div class="checkbox-text">
+              <b>Forzar PNG (Formato Original)</b>
+              <small>Convierte WebP a PNG al descargar</small>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Panel Búsqueda Secuencial (Collapsible) -->
+      <div class="sequential-search-panel" id="seqPanel" style="display: none;">
+        <div class="group-title" style="margin-top: 5px;">
+          Búsqueda Secuencial por Paginación
+          <span class="info-icon" title="Carga secuencialmente múltiples páginas de un cómic cambiando el número de página en la URL. Usa {page} para definir dónde cambia el número.">?</span>
+        </div>
+        <div class="seq-grid">
+          <div class="seq-row-url">
+            <input type="text" id="seqUrlPattern" placeholder="URL con {page}, ej: https://hentaiera.com/view/1473007/{page}/" title="Usa {page} donde va el número de página" style="width: 100%;" />
+          </div>
+          <div class="seq-row-inputs">
+            <div class="seq-input-box">
+              <span>Desde:</span>
+              <input type="number" id="seqStart" value="1" min="1" style="width: 55px;" />
+            </div>
+            <div class="seq-input-box">
+              <span>Hasta:</span>
+              <input type="number" id="seqEnd" value="10" min="1" style="width: 55px;" />
+            </div>
+            <div class="seq-input-box" style="flex-grow: 1;">
+              <span>Selector CSS:</span>
+              <input type="text" id="seqSelector" value="#gimg, #image-container img, .fit-horizontal img, .gallery-image img, figure img, .post__content img" placeholder="Selector CSS del img" title="Opcional. Selectores de la imagen principal separados por comas." style="width: 100%;" />
+            </div>
+            <button id="seqStartBtn" class="btn-clean" style="height: 28px; padding: 0 12px; font-weight: bold; background: var(--accent-color); color: white; border: none; cursor: pointer;">Buscar</button>
+          </div>
+          <div id="seqProgress" style="display: none; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>Progreso: <span id="seqProgressText">0/0</span></span>
+              <span id="seqProgressStatus" style="font-weight: 500;">Iniciando...</span>
+            </div>
+            <div class="progress-bar-bg"><div id="seqProgressBar" class="progress-bar-fill"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Pegar Enlaces (Collapsible) -->
+      <div class="sequential-search-panel" id="pastePanel" style="display: none; margin-top: 8px;">
+        <div class="group-title" style="margin-top: 5px;">
+          Pegar Enlaces Directos de Imágenes
+          <span class="info-icon" title="Pega enlaces directos de imágenes (uno por línea o separados por espacios) para agregarlos a la galería y descargarlos en la carpeta elegida.">?</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+          <textarea id="pasteLinksTextarea" rows="4" placeholder="Pega aquí todos los enlaces de imágenes (uno por línea o separados por espacio)..." style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 11px; resize: vertical;"></textarea>
+          <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <span id="pasteStatus" style="font-size: 11px; color: var(--accent-color); font-weight: 500;"></span>
+            <div style="display: flex; gap: 8px;">
+              <button id="clearPastedBtn" class="btn-clean" style="height: 28px; padding: 0 12px; font-size: 11px; cursor: pointer;">Limpiar</button>
+              <button id="processPastedBtn" class="btn-clean" style="height: 28px; padding: 0 14px; font-weight: bold; background: var(--accent-color); color: white; border: none; cursor: pointer; border-radius: 4px;">
+                📥 Cargar Enlaces
+              </button>
+              <button id="downloadPastedBtn" class="btn-clean" style="height: 28px; padding: 0 14px; font-weight: bold; background: #10b981; color: white; border: none; cursor: pointer; border-radius: 4px;">
+                ⬇️ Descargar Ahora
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra Inferior Cabecera -->
+    <div class="select-bar">
+      <label class="select-all-label">
+        <input type="checkbox" id="selectAll">
+        Seleccionar Todo (<span id="selectedCount">0</span> de <span id="totalCount">0</span>)
+      </label>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button id="toggleFiltersBtn" class="btn-clean" title="Contraer/Expandir filtros" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; transition: transform 0.2s;"><polyline points="18 15 12 9 6 15"></polyline></svg>
+        </button>
+        <button id="toggleSeqBtn" class="btn-clean" title="Abrir panel de búsqueda secuencial para cómics paginados" style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          🔄 Paginación
+        </button>
+        <button id="togglePasteBtn" class="btn-clean" title="Pegar lista de enlaces de imágenes para descargar" style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          📋 Pegar Enlaces
+        </button>
+        <label class="btn-clean" style="cursor: pointer;" title="Ocultar automáticamente imágenes que no cargan">
+          <input type="checkbox" id="cleanBrokenToggle" style="accent-color: var(--accent-color); margin: 0;">
+          Ocultar Rotas
+        </label>
+        <span style="font-size: 11px; color: var(--text-muted);">
+          Imágenes listas para guardar
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="grid-container" id="imageGrid">
+    <div class="loader">
+      <h3 style="margin: 0;">Analizando página...</h3>
+      <p style="font-size: 13px;">Buscando imágenes disponibles</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-inputs">
+      <!-- Botón Pantalla Completa -->
+      <button id="fullscreenBtn" class="icon-btn" title="Pantalla Completa" style="background: rgba(255,255,255,0.1); margin-right: 5px; padding: 0 10px; border-radius: 6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="fill: none; width: 18px; height: 18px; display: block;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+
+      <!-- Input 100% de la subcarpeta -->
+      <input type="text" id="subfolder" placeholder="Ej: Dragon_Ball_Z_Caps" title="Se creará esta carpeta dentro de 'Descargas'. Déjalo vacío para 'comics_completos'" style="width: 100%;">
+    </div>
+    <button id="downloadBtn" class="btn-download" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Descargar (<span id="btnCounter">0</span>)
+    </button>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
